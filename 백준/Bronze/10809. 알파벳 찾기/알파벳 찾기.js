@@ -10,9 +10,7 @@ const solve = () => {
     String.fromCharCode(i + 97)
   );
 
-  const alphabetIdxs = alphabets.map((alphabet) =>
-    input.findIndex((element) => element == alphabet)
-  );
+  const alphabetIdxs = alphabets.map((alphabet) => input.indexOf(alphabet));
 
   console.log(alphabetIdxs.join(" "));
 };
