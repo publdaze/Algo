@@ -1,11 +1,8 @@
-// Number.isNaN으로 변경하여 더 엄격하게 검사해줌
-function isNumber(data) {
-  return !Number.isNaN(data);
-}
-
 function solution(str) {
-	// map을 먼저 돌려 숫자로 바꾼 후 isNumber 체크
-  const numberList = [...str].map((char) => Number(char)).filter((char) => isNumber(char));
-  
-  return numberList.sort();
+	// 배열에서 숫자 여부를 따로 판단하는 방식이 아닌 string에서 숫자인 부분만 뽑아 내기
+  const stringOfNumber = str.match(/\d/g);
+	// 배열 Array라는 표현을 주로 쓰므로 List -> Array로 변수명 변경
+  const NumberArray = stringOfNumber.map(Number);
+
+  return NumberArray.sort();
 }
