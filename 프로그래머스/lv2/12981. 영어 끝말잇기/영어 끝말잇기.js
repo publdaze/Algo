@@ -9,8 +9,7 @@ function solution(n, words) {
     for (const word of words) {
         turn += 1;
         if (prevArray.includes(word) || (prevArray.length > 0 && prevArray.at(-1).at(-1) !== word[0])) {
-            console.log(turn);
-            return [turn % n === 0 ? n : turn % n, Math.ceil(turn / n)];
+            return [turn % n || n, Math.ceil(turn / n)];
         }
         
         prevArray.push(word);
