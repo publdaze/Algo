@@ -5,14 +5,15 @@
 
 function solution(n, words) {
     const prevArray = [];
-    let turn = 0;
-    for (const word of words) {
-        turn += 1;
-        if (prevArray.includes(word) || (prevArray.length > 0 && prevArray.at(-1).at(-1) !== word[0])) {
+    
+    for (let i = 0; i < words.length; i++) {
+        if (prevArray.includes(words[i]) || (i > 0 && words[i-1].at(-1) !== words[i].at(0))) {
+            const turn = i + 1;
+            
             return [turn % n || n, Math.ceil(turn / n)];
         }
         
-        prevArray.push(word);
+        prevArray.push(words[i]);
     }
     
     return [0, 0];
