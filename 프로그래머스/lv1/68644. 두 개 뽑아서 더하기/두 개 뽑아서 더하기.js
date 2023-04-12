@@ -1,14 +1,17 @@
 function solution(numbers) {
     var sumList = [];
     
-    for (let i = 0; i < numbers.length; i++) {
-        for (let j = i + 1; j < numbers.length; j++) {
-            const sumNum = numbers[i] + numbers[j];
+    numbers.forEach((number, idx) => {
+        const slicedNumbers = numbers.slice(idx + 1);
+        
+        slicedNumbers.forEach((slicedNumber) => {
+            const sumNum = number + slicedNumber;
+            
             if (!sumList.includes(sumNum)) {
-                sumList.push(numbers[i] + numbers[j]);
+                sumList.push(sumNum);
             }
-        }
-    }
+        })
+    })
     
     return sumList.sort((a, b) => a - b);
 }
