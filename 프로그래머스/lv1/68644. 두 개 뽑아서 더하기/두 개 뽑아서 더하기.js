@@ -1,11 +1,12 @@
 function solution(numbers) {
-    var sumList = [];
+    let sumList = [];
+    let copyNumbers = [...numbers];
     
     numbers.forEach((number, idx) => {
-        const slicedNumbers = numbers.slice(idx + 1);
+        copyNumbers.shift();
         
-        slicedNumbers.forEach((slicedNumber) => {
-            const sumNum = number + slicedNumber;
+        copyNumbers.forEach((shifteddNumber) => {
+            const sumNum = number + shifteddNumber;
             
             if (!sumList.includes(sumNum)) {
                 sumList.push(sumNum);
