@@ -8,12 +8,12 @@ function solution(board, moves) {
     let bombCnt = 0;
     
     board.forEach((line, lineIdx) => {
-        for (const [index, element] of line.entries()) {
-            if (!boardObj[index + 1]) boardObj[index + 1] = [];
+        line.forEach((element, elementIdx) => {
+            if (!boardObj[elementIdx + 1]) boardObj[elementIdx + 1] = [];
             if (element !== 0) {
-                boardObj[index + 1].unshift(element);
+                boardObj[elementIdx + 1].unshift(element);
             }
-        }
+        });
     });
     
     moves.forEach((move) => {
