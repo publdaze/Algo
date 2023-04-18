@@ -5,7 +5,7 @@
 
 function solution(s) {
     const set = {}
-    Array.from(s.matchAll(/\d+/g), m => set[m[0]] = set[m[0]] ? set[m[0]] + 1 : 1);
+    Array.from(s.match(/\d+/g), (element) => set[element] = set[element] ? set[element] + 1 : 1);
 
     const keys = Object.keys(set);
     
