@@ -8,7 +8,6 @@ function solution(numbers) {
                 break;
             } else {
                 if (backBigNum[j] === -1) {
-                    backBigNum[i] = -1;
                     break;
                 }
                 else if (numbers[i] < backBigNum[j]) {
