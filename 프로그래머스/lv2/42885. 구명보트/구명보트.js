@@ -1,15 +1,14 @@
 function solution(people, limit) {
-    let count = 0;
+    let twoPeopleBoatCount = 0;
     
     people.sort((a, b) => a - b);
     
-    while (people.length !== 0) {
-        if (people.at(0) + people.at(-1) <= limit) {
-            people.shift();
+    for (let i = 0, j = people.length - 1; i < j; j--) {
+        if (people[i] + people[j] <= limit) {
+            i++;
+            twoPeopleBoatCount++;
         }
-        people.pop();
-        count += 1;
     }
     
-    return count;
+    return people.length - twoPeopleBoatCount;
 }
