@@ -5,7 +5,7 @@ function solution(people, limit) {
     
     while (people.length !== 0) {
         if (people.at(0) + people.at(-1) <= limit) {
-            people.splice(0, 1);
+            people.shift();
         }
         people.pop();
         count += 1;
