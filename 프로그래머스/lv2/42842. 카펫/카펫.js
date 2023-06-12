@@ -2,10 +2,10 @@ function solution(brown, yellow) {
     const cornerCount = 4;
     
     for (let i = 1; i < yellow; i++) {
-        const yellowWidth = yellow / i;
         const yellowHeight = i;
-        const brownWidth = yellowWidth + 2;
+        const yellowWidth = yellow / yellowHeight;
         const brownHeight = yellowHeight + 2;
+        const brownWidth = yellowWidth + 2;
         const brownCount = brownWidth * 2 + brownHeight * 2 - cornerCount;
         
         if (brownCount === brown) {
@@ -13,5 +13,6 @@ function solution(brown, yellow) {
         }
     }
     
+    // if yellow === 1
     return [3, 3];
 }
