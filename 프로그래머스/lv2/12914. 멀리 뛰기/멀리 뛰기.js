@@ -1,11 +1,11 @@
 function solution(n) {
-    if (n === 1) return 1;
-    if (n === 2) return 2;
-    const nList = Array(n - 2).fill(0);
-    
-    const [k_1, k] = nList.reduce((prev) => {
-        return [prev[1], (prev[0] + prev[1]) % 1234567];
-    }, [1, 2]);
-    
-    return k;
+    let dp = [];
+
+    dp[1] = 1;
+    dp[2] = 2;
+    for (let i = 3; i <= n; i++){
+        dp[i] = (dp[i-1] + dp[i-2]) %1234567;
+    }
+
+    return dp[n];
 }
