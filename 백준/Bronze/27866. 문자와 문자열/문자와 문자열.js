@@ -1,7 +1,8 @@
 const fs = require("fs");
-const input = fs
+const [word, i] = fs
   .readFileSync(process.platform === "linux" ? "/dev/stdin" : "./input.txt")
   .toString()
+  .trim()
   .split("\n");
 
-console.log(input[0][input[1] - 1]);
+console.log(word[i - 1]);
