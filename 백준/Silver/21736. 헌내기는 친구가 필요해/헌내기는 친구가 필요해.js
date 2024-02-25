@@ -32,11 +32,11 @@ const getDoyeonPoint = () => {
 };
 
 const bfs = (startPoint) => {
-  const queue = [startPoint];
+  const stack = [startPoint];
   campus[startPoint[0]][startPoint[1]] = "X";
 
-  while (queue.length > 0) {
-    const [raw, col] = queue.pop();
+  while (stack.length > 0) {
+    const [raw, col] = stack.pop();
 
     for (let [x, y] of moveDiff) {
       if (raw + x < 0 || raw + x >= rawSize || col + y < 0 || col + y >= colSize) continue;
@@ -44,7 +44,7 @@ const bfs = (startPoint) => {
         if (campus[raw + x][col + y] === "P") {
           meetPeopleCnt += 1;
         }
-        queue.push([raw + x, col + y]);
+        stack.push([raw + x, col + y]);
         campus[raw + x][col + y] = "X";
       }
     }
@@ -75,7 +75,7 @@ const bfs = (startPoint) => {
     }
   }
 };
-*/
+ */
 
 /* 시간 초과 - 미리 방문 처리 (큐에 중복값 안 들어가도록)
 const bfs = (startPoint) => {
@@ -147,5 +147,4 @@ const bfs = (startPoint) => {
       }
     }
   }
-};
- */
+}; */
