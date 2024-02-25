@@ -8,7 +8,7 @@ const input = fs
   .map(Number);
 
 //REVIEW - 힙 구현
-//STUB - O(N^2)
+//STUB - O(NlgN) - 입력 N * 힙 노드 층 lgN
 
 class MaxHeap {
   constructor() {
