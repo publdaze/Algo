@@ -35,9 +35,8 @@ const bfs = (startPoint) => {
   const queue = [startPoint];
   campus[startPoint[0]][startPoint[1]] = "X";
 
-  let i = 0;
-  while (queue.length > i) {
-    const [raw, col] = queue.at(i++);
+  while (queue.length > 0) {
+    const [raw, col] = queue.pop();
 
     for (let [x, y] of moveDiff) {
       if (raw + x < 0 || raw + x >= rawSize || col + y < 0 || col + y >= colSize) continue;
@@ -54,6 +53,29 @@ const bfs = (startPoint) => {
 
 bfs(getDoyeonPoint());
 console.log(meetPeopleCnt || "TT");
+
+/* 정답 - 미리 방문 처리 + 큐 인덱스로 접근
+const bfs = (startPoint) => {
+  const queue = [startPoint];
+  campus[startPoint[0]][startPoint[1]] = "X";
+
+  let i = 0;
+  while (queue.length > i) {
+    const [raw, col] = queue.at(i++);
+
+    for (let [x, y] of moveDiff) {
+      if (raw + x < 0 || raw + x >= rawSize || col + y < 0 || col + y >= colSize) continue;
+      if (campus[raw + x][col + y] !== "X") {
+        if (campus[raw + x][col + y] === "P") {
+          meetPeopleCnt += 1;
+        }
+        queue.push([raw + x, col + y]);
+        campus[raw + x][col + y] = "X";
+      }
+    }
+  }
+};
+*/
 
 /* 시간 초과 - 미리 방문 처리 (큐에 중복값 안 들어가도록)
 const bfs = (startPoint) => {
