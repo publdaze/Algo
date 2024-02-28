@@ -10,13 +10,11 @@ const [N, M] = input.shift();
 const numbers = input.at(0).sort((a, b) => a - b);
 const visited = Array.from({ length: numbers.length }, () => 0);
 
-const result = [];
+const result = new Set();
 const picked = [];
 const pick = (n, toPick) => {
-  if (result.includes(picked.join(" "))) return;
-
   if (toPick === 0) {
-    result.push(picked.join(" "));
+    result.add(picked.join(" "));
     return;
   }
 
@@ -32,4 +30,4 @@ const pick = (n, toPick) => {
 
 pick(N, M);
 
-console.log(result.join("\n"));
+console.log([...result].join("\n"));
