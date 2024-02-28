@@ -8,6 +8,7 @@ const input = fs
 
 const [N, M] = input.shift();
 const numbers = input.at(0).sort((a, b) => a - b);
+const visited = Array.from({ length: numbers.length }, () => 0);
 
 const result = [];
 const picked = [];
@@ -18,10 +19,12 @@ const pick = (n, toPick) => {
   }
 
   for (let i = 0; i < n; i++) {
-    if (picked.includes(numbers[i])) continue;
+    if (visited[i]) continue;
+    visited[i] = 1;
     picked.push(numbers[i]);
     pick(n, toPick - 1);
     picked.pop();
+    visited[i] = 0;
   }
 };
 
