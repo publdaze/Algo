@@ -6,6 +6,16 @@ const input = fs
   .split("\n")
   .map(Number);
 
+const MAX_N = 250;
+const dp = [1n, 1n, 3n];
+
+for (let i = 3; i <= MAX_N; i++) {
+  dp[i] = 2n * dp[i - 2] + dp[i - 1];
+}
+
+console.log(input.map((num) => dp[num]).join("\n"));
+
+/* 비트 마스크 풀이
 const RAW_SIZE = 2;
 const MAX_N = 250;
 const dp = Array.from({ length: RAW_SIZE * MAX_N }, () => Array.from({ length: 1 << RAW_SIZE }, () => -1n));
@@ -41,3 +51,4 @@ const go = (idx, status) => {
 
 go(0, 0);
 console.log(input.map((num) => ways[num]).join("\n"));
+ */
