@@ -4,6 +4,26 @@ const input = fs
   .toString()
   .trim();
 
+//REVIEW - 엉켜있는 모양 처리
+
+const N = Number(input);
+const dp = [1, 0, 3];
+
+for (let i = 3; i <= N; i += 1) {
+  if (i % 2 !== 0) {
+    dp[i] = 0;
+    continue;
+  }
+
+  dp[i] = dp[i - 2] * 3;
+
+  for (let j = i - 4; j >= 0; j -= 2) {
+    dp[i] += dp[j] * 2;
+  }
+}
+console.log(dp[N]);
+
+/* 비트 마스크 풀이
 const N = Number(input);
 
 const RAW_SIZE = 3;
@@ -31,3 +51,4 @@ const go = (idx, status) => {
 };
 
 console.log(go(0, 0));
+*/
