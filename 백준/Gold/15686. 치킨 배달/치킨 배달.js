@@ -1,15 +1,15 @@
 const fs = require("fs");
-const [num, ...input] = fs
+const input = fs
   .readFileSync(process.platform === "linux" ? "/dev/stdin" : "./input.txt")
   .toString()
   .trim()
   .split("\n")
   .map((line) => line.split(" ").map(Number));
 
-//REVIEW - 문제 이해하고 조건 기억하기, DFS로도 풀어보기 / 메모리 초과(house, selectedChickenHouses 루프 순서 변경 / 인덱스로 조합 구하기 / 상수 변수 하드코딩 / comb 분리 shift 제거 / findHouses for문 변경)
+//REVIEW - 문제 이해하고 조건 기억하기, DFS로도 풀어보기 / 메모리 초과(house, selectedChickenHouses 루프 순서 변경 / 인덱스로 조합 구하기 / 상수 변수 하드코딩 / 🔙comb 분리 shift 제거 / ✅findHouses for문 변경)
 //TODO - 도시의 치킨 거리가 가장 작게 될지 = 치킨 거리 합이 가장 작게 = 집과 가장 가까운 치킨집 사이의 거리가 작은 치킨집 M 개 합
 
-const [N, M] = num;
+const [N, M] = input.shift();
 
 function combinations(arr, n) {
   if (n === 1) return arr.map((v) => [v]);
