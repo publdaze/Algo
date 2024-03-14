@@ -6,7 +6,7 @@ const input = fs
   .split("\n")
   .map((line) => line.split(" ").map(Number));
 
-//REVIEW - 문제 이해하고 조건 기억하기, DFS로도 풀어보기 / 메모리 초과(house, selectedChickenHouses 루프 순서 변경 / 인덱스로 조합 구하기 / 🔙상수 변수 하드코딩 / 🔙comb 분리 shift 제거 / ✅findHouses for문 변경)
+//REVIEW - 문제 이해하고 조건 기억하기, DFS로도 풀어보기 / 메모리 초과(house, selectedChickenHouses 루프 순서 변경 / 🔙인덱스로 조합 구하기 / 🔙상수 변수 하드코딩 / 🔙comb 분리 / 🔙shift 제거 / ✅findHouses for문 변경)
 //TODO - 도시의 치킨 거리가 가장 작게 될지 = 치킨 거리 합이 가장 작게 = 집과 가장 가까운 치킨집 사이의 거리가 작은 치킨집 M 개 합
 
 const [N, M] = input.shift();
@@ -36,21 +36,16 @@ input.forEach((raw, i) => {
   }
 });
 
-const chickenHouseIdx = Array.from({ length: chickenHouse.length }, (v, i) => i);
-const comb = combinations(chickenHouseIdx, M);
 const MAX_CHICKEN_DISTANCE = 98;
-
 const cityDistance = [];
-comb.forEach((selectedChickenHouses) => {
+combinations(chickenHouse, M).forEach((selectedChickenHouses) => {
   let houseDistance = 0;
 
   house.forEach(([houseR, houseC]) => {
     let chickenDistance = MAX_CHICKEN_DISTANCE;
 
-    selectedChickenHouses.forEach((selectedChickenHouse) => {
-      const distance =
-        Math.abs(chickenHouse[selectedChickenHouse][0] - houseR) +
-        Math.abs(chickenHouse[selectedChickenHouse][1] - houseC);
+    selectedChickenHouses.forEach(([chickenHouseR, chickenHouseC]) => {
+      const distance = Math.abs(chickenHouseR - houseR) + Math.abs(chickenHouseC - houseC);
 
       if (chickenDistance > distance) chickenDistance = distance;
     });
