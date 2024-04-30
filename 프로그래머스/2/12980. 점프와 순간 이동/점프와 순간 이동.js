@@ -1,10 +1,12 @@
+// REVIEW
+
 // 이동 - K칸 점프 / (현재까지 온 거리) * 2
 // 건전지 사용량 K칸 점프 시 K 만큼 소요
 // 도착 위치 N
 // 건전지 사용량 최소
-// 1만큼 이동 후 가능할 때까지 순간이동(X - 1칸보다 많이 이동 후 순간이동이 더 긴거리 순간이동 가능)
 
-function solution(n)
+// 다른 사람 풀이 - const solution = (n) => n.toString(2).match(/1/g).length;
+function solution(n) // O(log n)
 {
     let count = 0;
 
@@ -28,3 +30,6 @@ function solution(n)
     
 //     return battery.at(-1);
 // }
+
+
+// 1만큼 이동 후 가능할 때까지 순간이동(X - 1칸보다 많이 이동 후 순간이동이 더 긴거리 순간이동 가능)
