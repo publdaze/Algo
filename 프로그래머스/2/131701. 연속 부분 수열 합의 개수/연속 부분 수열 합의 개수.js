@@ -6,7 +6,7 @@ function solution(elements) {
         copyElements.slice(i, i + elements.length).reduce((acc, curr) => {
             const sum = acc + curr;
             sumSet.add(sum);
-            return acc + curr;
+            return sum;
         }, 0);
     }
     
