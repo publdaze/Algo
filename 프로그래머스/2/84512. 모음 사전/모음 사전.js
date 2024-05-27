@@ -1,7 +1,3 @@
-
-
-const ch = ["A", "A", "A", "A", "A", "E", "E", "E", "E", "E", "I", "I", "I", "I", "I", "O", "O", "O", "O", "O", "U", "U", "U", "U", "U"];
-const visited = Array(ch.length).fill(false);
 let cnt = -1;
 let result;
 
