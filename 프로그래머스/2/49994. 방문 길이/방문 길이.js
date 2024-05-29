@@ -1,23 +1,12 @@
 // 처음 걸어본 길의 길이
 
+// set 사용
 const DIRECTION = {
-    U: {
-        d: [ 0,  1],
-        reverse: "D",
-    },
-    D: {
-        d: [ 0, -1],
-        reverse: "U",
-    },
-    R: {
-        d: [ 1,  0],
-        reverse: "L",
-    },
-    L: {
-        d: [-1,  0],
-        reverse: "R",
-    },
-}
+    U: { d: [0, 1], reverse: "D" },
+    D: { d: [0, -1], reverse: "U" },
+    R: { d: [1, 0], reverse: "L" },
+    L: { d: [-1, 0], reverse: "R" },
+};
 
 function outOfRange(x, y) {
     return x < -5 || x > 5 || y < -5 || y > 5;
@@ -26,27 +15,76 @@ function outOfRange(x, y) {
 function solution(dirs) {
     let currPos = [0, 0];
     let cnt = 0;
-    const path = new Map();
-    
+    const path = new Set();
+
     for (let dir of dirs) {
         const [dx, dy] = DIRECTION[dir].d;
         const nextPos = [currPos[0] + dx, currPos[1] + dy];
+
         if (outOfRange(...nextPos)) continue;
-        
-        const srcKey = String(currPos);
-        const dstKey = String(nextPos);
-        
-        if (!path.get(srcKey)?.includes(dir)) {
-            path.get(srcKey)?.push(dir) || path.set(srcKey, [dir]);
-            path.get(dstKey)?.push(DIRECTION[dir].reverse) || path.set(dstKey, [DIRECTION[dir].reverse]);
+
+        const move = `${currPos[0]},${currPos[1]}-${nextPos[0]},${nextPos[1]}`;
+        const reverseMove = `${nextPos[0]},${nextPos[1]}-${currPos[0]},${currPos[1]}`;
+
+        if (!path.has(move) && !path.has(reverseMove)) {
+            path.add(move);
             cnt++;
         }
-        
+
         currPos = nextPos;
     }
-    
+
     return cnt;
 }
+
+// 정답 - map 사용
+// const DIRECTION = {
+//     U: {
+//         d: [ 0,  1],
+//         reverse: "D",
+//     },
+//     D: {
+//         d: [ 0, -1],
+//         reverse: "U",
+//     },
+//     R: {
+//         d: [ 1,  0],
+//         reverse: "L",
+//     },
+//     L: {
+//         d: [-1,  0],
+//         reverse: "R",
+//     },
+// }
+
+// function outOfRange(x, y) {
+//     return x < -5 || x > 5 || y < -5 || y > 5;
+// }
+
+// function solution(dirs) {
+//     let currPos = [0, 0];
+//     let cnt = 0;
+//     const path = new Map();
+    
+//     for (let dir of dirs) {
+//         const [dx, dy] = DIRECTION[dir].d;
+//         const nextPos = [currPos[0] + dx, currPos[1] + dy];
+//         if (outOfRange(...nextPos)) continue;
+        
+//         const srcKey = String(currPos);
+//         const dstKey = String(nextPos);
+        
+//         if (!path.get(srcKey)?.includes(dir)) {
+//             path.get(srcKey)?.push(dir) || path.set(srcKey, [dir]);
+//             path.get(dstKey)?.push(DIRECTION[dir].reverse) || path.set(dstKey, [DIRECTION[dir].reverse]);
+//             cnt++;
+//         }
+        
+//         currPos = nextPos;
+//     }
+    
+//     return cnt;
+// }
 
 // 반대 방향 고려 안 함
 // const DIRECTION = {
