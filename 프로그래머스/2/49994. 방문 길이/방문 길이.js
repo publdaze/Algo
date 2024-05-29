@@ -19,13 +19,6 @@ const DIRECTION = {
     },
 }
 
-const REVERSE_DIRECTION = {
-    U: "D",
-    D: [ 0, -1],
-    R: [ 1,  0],
-    L: [-1,  0],
-}
-
 function outOfRange(x, y) {
     return x < -5 || x > 5 || y < -5 || y > 5;
 }
@@ -42,6 +35,7 @@ function solution(dirs) {
         
         const srcKey = String(currPos);
         const dstKey = String(nextPos);
+        
         if (!path.get(srcKey)?.includes(dir)) {
             path.get(srcKey)?.push(dir) || path.set(srcKey, [dir]);
             path.get(dstKey)?.push(DIRECTION[dir].reverse) || path.set(dstKey, [DIRECTION[dir].reverse]);
