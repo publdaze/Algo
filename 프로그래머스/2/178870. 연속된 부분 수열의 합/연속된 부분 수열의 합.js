@@ -3,20 +3,23 @@ function solution(sequence, k) {
     let right = 0;
     let subStrLeftIdx = left;
     let subStrRightIdx = sequence.length;
-    let subStrSum = sequence.at(right);
+    let subStrSum = sequence[right];
     
-    while(1) {
+    do {
+        // 최적 조건 업데이트
         if (subStrSum === k && (subStrRightIdx - subStrLeftIdx) > (right - left)) {
             [subStrLeftIdx, subStrRightIdx] = [left, right];
         }
-        if (left === sequence.length - 1) return [subStrLeftIdx, subStrRightIdx];
-        if (right === sequence.length - 1 && subStrSum < k) return [subStrLeftIdx, subStrRightIdx];
+        
+        // 누적합 k 초과 하지 않도록 관리
         if (subStrSum >= k) {
             subStrSum -= sequence[left++];
             continue;
         }
-        if (right < sequence.length - 1) {
-            subStrSum += sequence[++right];
-        }
-    }
+        
+        // 누적합 k 보다 작은 경우
+        subStrSum += sequence[++right];
+    } while (right < sequence.length);
+    
+    return [subStrLeftIdx, subStrRightIdx];
 }
