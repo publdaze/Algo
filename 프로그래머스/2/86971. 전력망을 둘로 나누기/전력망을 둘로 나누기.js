@@ -25,17 +25,17 @@ function getStartPoint(graph) {
 
 function getTowerCnt(start, graph) {
     const visited = Array(graph.length).fill(false);
-    const queue = [start];
+    const stack = [start];
     visited[start] = true;
     let cnt = 1;
     
-    while (queue.length) {
-        const src = queue.pop();
+    while (stack.length) {
+        const src = stack.pop();
         
         graph[src]?.forEach((dst) => {
             if (visited[dst]) return;
             visited[dst] = true;
-            queue.push(dst);
+            stack.push(dst);
             cnt++;
         });
     }
