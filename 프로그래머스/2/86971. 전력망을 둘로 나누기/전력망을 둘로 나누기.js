@@ -46,8 +46,9 @@ function solution(n, wires) {
     return wires.reduce((minDiff, wire) => {
         const graph = Array.from({ length: n + 1 }, () => []);
         setGraph(graph, wires.filter((w) => w !== wire));
-        const startPoint = getStartPoint(graph);
-        const towerCnt = getTowerCnt(startPoint, graph);
+        
+        //const startPoint = getStartPoint(graph);
+        const towerCnt = getTowerCnt(1, graph);
         const diff = Math.abs(n - 2 * towerCnt);
         return Math.min(minDiff, diff);
     }, n);
