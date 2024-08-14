@@ -1,3 +1,3 @@
 function solution(myString, pat) {
-    return +myString.toLowerCase().includes(pat.toLowerCase());
+    return +new RegExp(pat, 'i').test(myString);
 }
