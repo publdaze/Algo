@@ -13,14 +13,6 @@ function solution(storey) {
     while (stack.length > 0) {
         const [currNum, stone] = stack.pop();
         
-        if (currNum === 0) {
-            stoneCase.push(stone);
-            continue;
-        } 
-        if (currNum % 10 === 0) {
-            stack.push([currNum / 10,  stone]);
-            continue;
-        }
         if (currNum < 10) {
             stoneCase.push(stone + Math.min(currNum, 10 - currNum + 1));
             continue;
