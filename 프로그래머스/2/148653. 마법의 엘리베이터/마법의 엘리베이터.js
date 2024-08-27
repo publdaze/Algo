@@ -18,8 +18,11 @@ function solution(storey) {
             continue;
         }
         
-        stack.push([Math.ceil(currNum / 10),  stone + 10 - currNum % 10]);
-        stack.push([Math.floor(currNum / 10), stone + currNum % 10]);
+        const remainder = currNum % 10;
+        const nextNum = Math.floor(currNum / 10);
+        
+        stack.push([nextNum, stone + remainder]);
+        stack.push([nextNum + 1, stone + (10 - remainder)]);
     }
     
     return Math.min(...stoneCase)
