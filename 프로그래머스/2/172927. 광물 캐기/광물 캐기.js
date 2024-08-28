@@ -1,10 +1,11 @@
 const GROUP_MAX_CNT = 5;
 
-function setGroup(minerals) {
+function setGroups(minerals) {
   const groups = [];
   while (minerals.length > 0) {
+    const currGroup = minerals.splice(0, GROUP_MAX_CNT);
     groups.push(
-      minerals.splice(0, GROUP_MAX_CNT).reduce(
+      currGroup.reduce(
         (acc, mineral) => {
           acc[mineral] += 1;
           return acc;
@@ -16,19 +17,21 @@ function setGroup(minerals) {
   return groups;
 }
 
+function removeRemainingMinerals(groups, [diamondPick, ironPick, stonePick]) {
+  const picksCnt = diamondPick + ironPick + stonePick;
+  if (groups.length > picksCnt) groups.splice(-(groups.length - picksCnt));
+}
+
 function solution(picks, minerals) {
-  let groups = setGroup(minerals);
-  const [diamondPick, ironPick, stonePick] = picks;
-  groups = groups.slice(0, diamondPick + ironPick + stonePick);
+  const groups = setGroups(minerals);
+  removeRemainingMinerals(groups, picks);
+
   groups.sort((a, b) => b.diamond - a.diamond || b.iron - a.iron || b.stone - a.stone);
 
+  const [diamondPick, ironPick, stonePick] = picks;
   let fatigue = 0;
-
-  fatigue += groups.splice(0, diamondPick).reduce((acc, group) => acc + group.diamond + group.iron + group.stone, 0);
-  fatigue += groups.splice(0, ironPick).reduce((acc, group) => acc + group.diamond * 5 + group.iron + group.stone, 0);
-  fatigue += groups
-    .splice(0, stonePick)
-    .reduce((acc, group) => acc + group.diamond * 25 + group.iron * 5 + group.stone, 0);
-
+  fatigue += groups.splice(0, diamondPick).reduce((fatigue, { diamond, iron, stone }) => fatigue + diamond *  1 + iron * 1 + stone * 1, 0);
+  fatigue += groups.splice(0,    ironPick).reduce((fatigue, { diamond, iron, stone }) => fatigue + diamond *  5 + iron * 1 + stone * 1, 0);
+  fatigue += groups.splice(0,   stonePick).reduce((fatigue, { diamond, iron, stone }) => fatigue + diamond * 25 + iron * 5 + stone * 1, 0);
   return fatigue;
 }
