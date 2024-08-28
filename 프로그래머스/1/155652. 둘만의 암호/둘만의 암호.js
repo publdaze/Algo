@@ -1,10 +1,17 @@
 function solution(s, skip, index) {
+    const skipSet = new Set(skip);
+    const aCharCode = 'a'.charCodeAt();
+    const zCharCode = 'z'.charCodeAt();
+    
     return [...s].map((c) => {
         let currCharCode = c.charCodeAt();
-        for (let i = 0; i < index; i++) {
-            do {
-                currCharCode = currCharCode < "z".charCodeAt() ? currCharCode + 1 : "a".charCodeAt();
-            } while(skip.includes(String.fromCharCode(currCharCode)));
+        let steps = 0;
+        
+        while (steps < index) {
+            currCharCode = currCharCode < zCharCode ? currCharCode + 1 : aCharCode;
+            if (!skipSet.has(String.fromCharCode(currCharCode))) {
+                steps++;
+            }
         }
         
         return String.fromCharCode(currCharCode);
