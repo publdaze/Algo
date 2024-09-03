@@ -6,17 +6,21 @@ function solution(answers) {
   };
 
   const scores = answers.reduce(
-    ({ type1Score, type2Score, type3Score }, answer, i) => ({
-      type1Score: type1Score + Number(GUESSING_PATTERN.TYPE1[i % GUESSING_PATTERN.TYPE1.length] === answer),
-      type2Score: type2Score + Number(GUESSING_PATTERN.TYPE2[i % GUESSING_PATTERN.TYPE2.length] === answer),
-      type3Score: type3Score + Number(GUESSING_PATTERN.TYPE3[i % GUESSING_PATTERN.TYPE3.length] === answer),
-    }),
-    { type1Score: 0, type2Score: 0, type3Score: 0 }
+    ([type1Score, type2Score, type3Score], answer, i) => [
+      type1Score + Number(GUESSING_PATTERN.TYPE1[i % GUESSING_PATTERN.TYPE1.length] === answer),
+      type2Score + Number(GUESSING_PATTERN.TYPE2[i % GUESSING_PATTERN.TYPE2.length] === answer),
+      type3Score + Number(GUESSING_PATTERN.TYPE3[i % GUESSING_PATTERN.TYPE3.length] === answer),
+    ],
+    [0, 0, 0]
   );
-    
-  const highestScore = Math.max(...Object.values(scores));
-  return Object.values(scores).map((score, index) => {
-      if (score === highestScore) return index + 1;
-      return null;
-  }).filter((score) => score !== null);
+
+  const highestScore = Math.max(...scores);
+  const highestScorePeople = [];
+  scores.forEach((score, index) => {
+    if (score === highestScore) {
+      const personNum = index + 1;
+      highestScorePeople.push(personNum);
+    }
+  });
+  return highestScorePeople;
 }
