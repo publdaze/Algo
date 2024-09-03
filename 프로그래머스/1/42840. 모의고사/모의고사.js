@@ -1,3 +1,12 @@
+function isCorrect(pattern, problemIdx, answer) {
+  return pattern[problemIdx % pattern.length] === answer;
+}
+
+function getScore(isCorrect) {
+  const SCORE_OF_EACH_PROBLEM = 1;
+  return isCorrect ? SCORE_OF_EACH_PROBLEM : 0;
+}
+
 function solution(answers) {
   const GUESSING_PATTERN = {
     TYPE1: [1, 2, 3, 4, 5],
@@ -7,9 +16,9 @@ function solution(answers) {
 
   const scores = answers.reduce(
     ([type1Score, type2Score, type3Score], answer, i) => [
-      type1Score + Number(GUESSING_PATTERN.TYPE1[i % GUESSING_PATTERN.TYPE1.length] === answer),
-      type2Score + Number(GUESSING_PATTERN.TYPE2[i % GUESSING_PATTERN.TYPE2.length] === answer),
-      type3Score + Number(GUESSING_PATTERN.TYPE3[i % GUESSING_PATTERN.TYPE3.length] === answer),
+      type1Score + getScore(isCorrect(GUESSING_PATTERN.TYPE1, i, answer)),
+      type2Score + getScore(isCorrect(GUESSING_PATTERN.TYPE2, i, answer)),
+      type3Score + getScore(isCorrect(GUESSING_PATTERN.TYPE3, i, answer)),
     ],
     [0, 0, 0]
   );
