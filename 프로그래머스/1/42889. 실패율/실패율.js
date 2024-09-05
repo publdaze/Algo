@@ -1,18 +1,23 @@
 function solution(N, stages) {
-    let failureRates = Array(N + 2).fill(0);
-    let peopleCnt = stages.length;
-    
-    stages.map((stage) => {
-        failureRates[stage] += 1;
+  let challengeCnt = Array(N + 1).fill(0);
+  let peopleCnt = stages.length;
+
+  // 각 스테이지 도전 중인 사람수 구하기
+  stages.map((stage) => {
+    const stageIdx = stage - 1;
+    challengeCnt[stageIdx] += 1;
+  });
+
+  // 실패율 구하기
+  return challengeCnt
+    .map((currStageChallengeCnt, i) => {
+      const stageInfo = { stage: i + 1, failureRate: currStageChallengeCnt / peopleCnt };
+      
+      // 남은 인원 업데이트
+      peopleCnt -= currStageChallengeCnt;
+      return stageInfo;
     })
-    
-    failureRates = failureRates.map((challengePersonCnt, i) => {
-        peopleCnt -= challengePersonCnt;
-        return { stage: i, failureRate: challengePersonCnt / peopleCnt };
-    }).slice(1, -1);
-    
-    failureRates.sort((a, b) => b.failureRate - a.failureRate || a.stage - b.stage);
-    
-    
-    return failureRates.map(({stage}) => stage);
+    .slice(0, -1)
+    .sort((a, b) => b.failureRate - a.failureRate || a.stage - b.stage)
+    .map(({ stage }) => stage);
 }
