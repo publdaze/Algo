@@ -21,7 +21,7 @@ function solution(dirs) {
     const path = new Set();
     
     let currPoint = [0, 0];
-    let cnt = 0;
+    
     [...dirs].forEach((dir) => {
         const [currRow, currCol] = currPoint;
         const [dRow, dCol] = NEXT_DIRECTION[dir];
@@ -29,18 +29,16 @@ function solution(dirs) {
         
         if (outOfRange(nextRow, nextCol)) return;
         
-        currPoint = [nextRow, nextCol];
-        
         let key;
         if (currRow < nextRow || currCol < nextCol) {
             key = `[${currRow}, ${currCol}] - [${nextRow}, ${nextCol}]`;
         } else {
             key = `[${nextRow}, ${nextCol}] - [${currRow}, ${currCol}]`;
         }
-        if (path.has(key)) return;
         path.add(key);
-        cnt++;
-    })
+        
+        currPoint = [nextRow, nextCol];
+    });
     
-    return cnt;
+    return path.size;
 }
