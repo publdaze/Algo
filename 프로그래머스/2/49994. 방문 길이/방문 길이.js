@@ -1,121 +1,46 @@
 // 처음 걸어본 길의 길이
+// 좌표평면 넘어가면 명령어 무시
+// 길을 다 그어보고, 중복되어 간 길을 제외한 길의 숫자를 세자
+// 방향 무관하게 줄 긋기 - 좌표 2개가 동일하면 같은 길
 
-// set 사용
-const DIRECTION = {
-    U: { d: [0, 1], reverse: "D" },
-    D: { d: [0, -1], reverse: "U" },
-    R: { d: [1, 0], reverse: "L" },
-    L: { d: [-1, 0], reverse: "R" },
-};
+const ROW_RANGE = { MIN: -5, MAX: 5};
+const COL_RANGE = { MIN: -5, MAX: 5};
 
-function outOfRange(x, y) {
-    return x < -5 || x > 5 || y < -5 || y > 5;
+const NEXT_DIRECTION = {
+    U: [-1,  0],
+    D: [ 1,  0],
+    R: [ 0,  1],
+    L: [ 0, -1],
+}
+
+function outOfRange(row, col) {
+    return row < ROW_RANGE.MIN || row > ROW_RANGE.MAX || col < COL_RANGE.MIN || col > COL_RANGE.MAX;
 }
 
 function solution(dirs) {
-    let currPos = [0, 0];
-    let cnt = 0;
     const path = new Set();
-
-    for (let dir of dirs) {
-        const [dx, dy] = DIRECTION[dir].d;
-        const nextPos = [currPos[0] + dx, currPos[1] + dy];
-
-        if (outOfRange(...nextPos)) continue;
-
-        const move = `${currPos[0]},${currPos[1]}-${nextPos[0]},${nextPos[1]}`;
-        const reverseMove = `${nextPos[0]},${nextPos[1]}-${currPos[0]},${currPos[1]}`;
-
-        if (!path.has(move) && !path.has(reverseMove)) {
-            path.add(move);
-            cnt++;
+    
+    let currPoint = [0, 0];
+    let cnt = 0;
+    [...dirs].forEach((dir) => {
+        const [currRow, currCol] = currPoint;
+        const [dRow, dCol] = NEXT_DIRECTION[dir];
+        const [nextRow, nextCol] = [currRow + dRow, currCol + dCol];
+        
+        if (outOfRange(nextRow, nextCol)) return;
+        
+        currPoint = [nextRow, nextCol];
+        
+        let key;
+        if (currRow < nextRow || currCol < nextCol) {
+            key = `[${currRow}, ${currCol}] - [${nextRow}, ${nextCol}]`;
+        } else {
+            key = `[${nextRow}, ${nextCol}] - [${currRow}, ${currCol}]`;
         }
-
-        currPos = nextPos;
-    }
-
+        if (path.has(key)) return;
+        path.add(key);
+        cnt++;
+    })
+    
     return cnt;
 }
-
-// 정답 - map 사용
-// const DIRECTION = {
-//     U: {
-//         d: [ 0,  1],
-//         reverse: "D",
-//     },
-//     D: {
-//         d: [ 0, -1],
-//         reverse: "U",
-//     },
-//     R: {
-//         d: [ 1,  0],
-//         reverse: "L",
-//     },
-//     L: {
-//         d: [-1,  0],
-//         reverse: "R",
-//     },
-// }
-
-// function outOfRange(x, y) {
-//     return x < -5 || x > 5 || y < -5 || y > 5;
-// }
-
-// function solution(dirs) {
-//     let currPos = [0, 0];
-//     let cnt = 0;
-//     const path = new Map();
-    
-//     for (let dir of dirs) {
-//         const [dx, dy] = DIRECTION[dir].d;
-//         const nextPos = [currPos[0] + dx, currPos[1] + dy];
-//         if (outOfRange(...nextPos)) continue;
-        
-//         const srcKey = String(currPos);
-//         const dstKey = String(nextPos);
-        
-//         if (!path.get(srcKey)?.includes(dir)) {
-//             path.get(srcKey)?.push(dir) || path.set(srcKey, [dir]);
-//             path.get(dstKey)?.push(DIRECTION[dir].reverse) || path.set(dstKey, [DIRECTION[dir].reverse]);
-//             cnt++;
-//         }
-        
-//         currPos = nextPos;
-//     }
-    
-//     return cnt;
-// }
-
-// 반대 방향 고려 안 함
-// const DIRECTION = {
-//     // dx, dy
-//     U: [ 0,  1],
-//     D: [ 0, -1],
-//     R: [ 1,  0],
-//     L: [-1,  0],
-// }
-
-// function outOfRange(x, y) {
-//     return x < -5 || x > 5 || y < -5 || y > 5;
-// }
-
-// function solution(dirs) {
-//     let currPos = [0, 0];
-//     let cnt = 0;
-//     const path = new Map();
-    
-//     for (let dir of dirs) {
-//         const [nextX, nextY] = [currPos[0] + DIRECTION[dir][0], currPos[1] + DIRECTION[dir][1]];
-//         if (outOfRange(nextX, nextY)) continue;
-        
-//         const pathKey = String(currPos);
-//         if (!path.get(pathKey)?.includes(dir)) {
-//             path.get(pathKey)?.push(dir) || path.set(pathKey, [dir]);
-//             cnt++;
-//         }
-        
-//         currPos = [nextX, nextY];
-//     }
-    
-//     return cnt;
-// }
