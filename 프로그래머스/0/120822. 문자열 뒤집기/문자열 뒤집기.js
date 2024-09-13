@@ -24,11 +24,36 @@ class Stack {
   }
 }
 
+class Queue {
+  constructor(maxSize) {
+    this.data = [];
+    this.front = 0;
+    this.rear = 0;
+  }
+  push(element) {
+    this.data.push(element);
+    this.rear++;
+  }
+  pop() {
+    return this.data[this.front++];
+  }
+  isEmpty() {
+	  return this.front === this.rear;
+	}
+}
+
 function solution(my_string) {
+		const queue = new Queue();
     const stack = new Stack();
     
-    for (const char of my_string) stack.push(char);
+    for (const char of my_string) {
+		    queue.push(char);
+    }
     
+    while(!queue.isEmpty()) {
+		    stack.push(queue.pop());
+    }
+        
     let reverseString = "";
     while(!stack.isEmpty()) {
         reverseString += stack.pop();
