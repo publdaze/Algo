@@ -1,17 +1,19 @@
 function solution(prices) {
-    const result = []
-    const prevPrices = [];
-    
-    while (prices.length > 0) {
-        const price = prices.pop();
-        let term = 0;
-        for (let i = prevPrices.length - 1; i >= 0; i--) {
-            term++;
-            if (price > prevPrices[i]) break;
-        }
-        result.push(term);
-        prevPrices.push(price);
+  const durations = Array(prices.length).fill(0);
+  const waitingPriceIdx = [];
+
+  prices.forEach((currPrice, currentIdx) => {
+    while (waitingPriceIdx.length > 0 && prices[waitingPriceIdx.at(-1)] > currPrice) {
+      const prevIdx = waitingPriceIdx.pop();
+      durations[prevIdx] = currentIdx - prevIdx;
     }
-    
-    return result.reverse();
+    waitingPriceIdx.push(currentIdx);
+  });
+
+  while (waitingPriceIdx.length > 0) {
+    const idx = waitingPriceIdx.pop();
+    durations[idx] = prices.length - 1 - idx;
+  }
+
+  return durations;
 }
