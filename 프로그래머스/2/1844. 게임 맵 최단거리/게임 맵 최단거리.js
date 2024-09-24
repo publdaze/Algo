@@ -1,30 +1,32 @@
-const DERECTION = [
-    [1, 0],
-    [0, 1],
-    [-1, 0],
-    [0, -1],
+const DIRECTION = [
+    [ 0,  1],
+    [ 0, -1],
+    [ 1,  0],
+    [-1,  0],
 ];
 
-function outOfRange(row, col, maxRow, maxCol) {
-    return row < 0 || col < 0 || row >= maxRow || col >= maxCol;
+const outOfRange = (row, col, maxRow, maxCol) => {
+    return row < 0 || row >= maxRow || col < 0 || col >= maxCol;
 }
 
-function bfs(maps, start, end) {
-    const maxRow = maps.length, maxCol = maps[0].length;
-    const visited = Array.from({length: maxRow}, () => Array(maxCol).fill(false));
+const bfs = (maps) => {
+    const [maxRow, maxCol] = [maps.length, maps[0].length];
+    const visited = Array.from({ length: maxRow }, () => Array(maxCol).fill(false));
     
-    const queue = [start];
-    visited[start[0]][start[1]] = true;
+    const queue = [[0, 0, 1]];
+    visited[0][0] = true;
     
     while (queue.length > 0) {
-        const [row, col, depth] = queue.shift();
+        const [row, col, cnt] = queue.shift();
         
-        for (let [dRow, dCol] of DERECTION) {
-            const nextRow = row + dRow, nextCol = col + dCol, nextDepth = depth + 1;
-            if (nextRow === end[0] && nextCol === end[1]) return nextDepth;
+        for (const [dRow, dCol] of DIRECTION) {
+            const [nextRow, nextCol] = [row + dRow, col + dCol];
+            
             if (outOfRange(nextRow, nextCol, maxRow, maxCol) || maps[nextRow][nextCol] === 0 || visited[nextRow][nextCol] === true) continue;
-            queue.push([nextRow, nextCol, nextDepth]);
+            if (nextRow === maxRow - 1 && nextCol === maxCol - 1) return cnt + 1;
+            
             visited[nextRow][nextCol] = true;
+            queue.push([nextRow, nextCol, cnt + 1]);
         }
     }
     
@@ -32,5 +34,5 @@ function bfs(maps, start, end) {
 }
 
 function solution(maps) {
-    return bfs(maps, [0, 0, 1], [maps.length - 1, maps[0].length - 1]);
+    return bfs(maps);
 }
