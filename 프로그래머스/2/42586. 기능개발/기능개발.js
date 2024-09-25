@@ -3,20 +3,21 @@
 // 각 배포마다 몇 개의 기능이 배포되는 가
 // 배포 하루에 한 번 (하루 끝)
 function solution(progresses, speeds) {
-    const completeTime = progresses.map((progress, i) => Math.ceil((100 - progress) / speeds[i])); // 소요 시간
+    const completeTime = progresses.map((progress, i) => Math.ceil((100 - progress) / speeds[i]));
     
-    let currDay = completeTime[0];
     const deployCnts = [];
-    while (completeTime.length > 0) {
-        let cnt = 0;
-        
-        while (currDay >= completeTime[0]) {
-            completeTime.shift();
+    let currDay = completeTime[0];
+    let i = 0;
+    let cnt = 0;
+    while (i <= completeTime.length) {
+        if (currDay >= completeTime[i]) {
             cnt++;
+        } else {
+            deployCnts.push(cnt);
+            cnt = 1;
+            currDay = completeTime[i]
         }
-        
-        deployCnts.push(cnt);
-        currDay = completeTime[0];
+        i++;
     }
     
     return deployCnts;
