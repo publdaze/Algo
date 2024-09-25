@@ -1,24 +1,23 @@
-// 작업의 진도 - 100% 배포
-// 뒤의 기능 먼저 개발 시 앞 기능 배포될 때 함께 배포
-// 배포는 하루끝에 한 번
-
+// 뒤의 기능 먼저 개발은 가능하지만 배포는 앞의 기능이 배포될 때 함께
+// 기능 개발 완료 : 100%
+// 각 배포마다 몇 개의 기능이 배포되는 가
+// 배포 하루에 한 번 (하루 끝)
 function solution(progresses, speeds) {
-    progresses.reverse();
-    speeds.reverse();
+    const completeTime = progresses.map((progress, i) => Math.ceil((100 - progress) / speeds[i])); // 소요 시간
     
-    const result = [];
-    while (progresses.length > 0) {
+    let currDay = completeTime[0];
+    const deployCnts = [];
+    while (completeTime.length > 0) {
         let cnt = 0;
-        while (progresses.at(-1) >= 100) {
-            progresses.pop();
-            speeds.pop();
-            
+        
+        while (currDay >= completeTime[0]) {
+            completeTime.shift();
             cnt++;
         }
-        if (cnt > 0) result.push(cnt);
         
-        progresses = progresses.map((progress, i) => progress + speeds[i]);
+        deployCnts.push(cnt);
+        currDay = completeTime[0];
     }
     
-    return result;
+    return deployCnts;
 }
