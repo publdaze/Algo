@@ -1,10 +1,10 @@
 # [level 1] 소수 찾기 - 12921 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/12921) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/12921#) 
 
 ### 성능 요약
 
-메모리: 45.6 MB, 시간: 58.08 ms
+메모리: 45.3 MB, 시간: 49.75 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2024년 10월 08일 11:26:07
+2024년 10월 08일 11:26:36
 
 ### 문제 설명
 
