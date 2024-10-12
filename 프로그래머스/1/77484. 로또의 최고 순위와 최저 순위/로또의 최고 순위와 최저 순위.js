@@ -6,5 +6,6 @@ function solution(lottos, win_nums) {
     const unknownCnt = lottos.length - knownNumber.length;
     const winNumSet = new Set(win_nums);
     const knownCorrectCnt = knownNumber.reduce((acc, num) => acc + winNumSet.has(num), 0);
-    return [7 - ((knownCorrectCnt + unknownCnt) || 1), 7 - (knownCorrectCnt || 1)];
+    const rank = [6, 6, 5, 4, 3, 2, 1];
+    return [rank[knownCorrectCnt + unknownCnt],rank[knownCorrectCnt]];
 }
