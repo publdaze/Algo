@@ -16,8 +16,7 @@ function solution(X, Y) {
         result += String(i).repeat(Math.min(xDigits[i], yDigits[i]));
     }
     
-    const set = new Set(result);
-    if (set.size === 1 && set.has("0")) return "0";
-    if (set.size === 0) return "-1";
+    if (result.length === 0) return "-1";
+    if (+result === 0) return "0";
     return result;
 }
