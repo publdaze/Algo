@@ -1,3 +1,4 @@
+// dfs -> bfs
 function getGraph(N, road) {
     const graph = Array.from({ length: N + 1 }, () => []);
     for (const [src, dst, weight] of road) {
@@ -19,7 +20,6 @@ function bfs(N, graph) {
             distances[dst] = Math.min(distances[dst], distances[src] + weight);
             
             if (visited[src][dst] || dst === 1) continue;
-            
             stack.push(dst);
             visited[src][dst] = true;
         }
@@ -61,7 +61,7 @@ function solution(N, road, K) {
 //             visited[src][dst] = true;
 //         }
 //     }
-    
+//     console.log(distances)
 //     return distances;
 // }
 
