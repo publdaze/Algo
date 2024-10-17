@@ -1,77 +1,32 @@
-// 금액 지불 -> 10일 회원
-// 회원 매일 한 가지 할인, 하나만 구매 가능
-// 원하는 제품과 수량이 할인하는 날짜와 10일 연속으로 일치할 경우 회원가입
-
+// 10일 동안 회원 자격
+// 매일 한 가지 할인
+// 할인 제품 하루에 하나씩만 구매 가능
+// 원하는 제품과 수량이 10일안에 있을 때 맞춰서 가입
+// 회원 가입 가능한 날짜 수
+// ["chicken", "apple", "apple", "banana", "rice", "apple", "pork", "banana", "pork", "rice", "pot", "banana", "apple", "banana"]
+// ["banana", "apple", "rice", "pork", "pot"]
 function solution(want, number, discount) {
-    const map = new Map();
+    let startDate = 0;
+    let endDate = startDate + 10;
     
-    for (let i = 0; i < want.length; i++) {
-        map.set(want[i], number[i]);
-    }
-    
-    let startDay = 0;
-    let endDay = startDay + 10;
-    let result = 0;
-    
-    for (let i = startDay; i < endDay; i++) {
-        if (map.has(discount[i])) {
-            map.set(discount[i], map.get(discount[i]) - 1);
-        }
-    }
-    
-    while (startDay < endDay) {
-        if (want.every((w) => (map.get(w) <= 0))) {
-            result += 1;
-        } 
-        if (map.has(discount[startDay])) {
-            map.set(discount[startDay], map.get(discount[startDay]) + 1);
-        }
-        startDay += 1;
-        if (endDay < discount.length) {
-            if (map.has(discount[endDay]) && endDay !== discount.length) {
-                map.set(discount[endDay], map.get(discount[endDay]) - 1);
-            }
-            endDay += 1;
-        }
-    }
-    
-    return result;
-}
+    const wantItems = want.reduce((acc, item, idx) => acc.set(item, number[idx]), new Map());
+    const currTermItems = discount.slice(startDate, endDate).reduce(((acc, item) => acc.set(item, (acc.get(item) || 0) + 1)), new Map());
 
-// 할인 적용 10일 미민일 때 고려 X
-// function solution(want, number, discount) {
-//     const map = new Map();
+    let cnt = 0;
     
-//     for (let i = 0; i < want.length; i++) {
-//         map.set(want[i], number[i]);
-//     }
+    while (startDate < endDate) {
+        if ([...wantItems.entries()].every(([key, value]) => currTermItems.get(key) >= value)) {
+            cnt++;
+        };
+        
+        
+        currTermItems.set(discount[startDate], currTermItems.get(discount[startDate]) - 1);
+        startDate += 1;
+        if (endDate < discount.length) {
+            currTermItems.set(discount[endDate], (currTermItems.get(discount[endDate]) || 0) + 1);
+            endDate += 1;
+        }
+    }
     
-//     let startDay = 0;
-//     let endDay = startDay + 10;
-//     let result = 0;
-    
-//     for (let i = startDay; i < endDay; i += 1) {
-//         if (map.has(discount[i])) {
-//             map.set(discount[i], map.get(discount[i]) - 1);
-//         }
-//     }
-    
-//     while (endDay !== discount.length) {
-//         if (want.every((w) => (map.get(w) <= 0))) {
-//             result += 1;
-//         } else {
-            
-//             if (map.has(discount[startDay])) {
-//                 map.set(discount[startDay], map.get(discount[startDay]) + 1);
-//             }
-            
-//             if (map.has(discount[endDay])) {
-//                 map.set(discount[endDay], map.get(discount[endDay]) - 1);
-//             }
-//         }
-//         startDay += 1;
-//         endDay += 1;
-//     }
-    
-//     return result;
-// }
+    return cnt;
+}
