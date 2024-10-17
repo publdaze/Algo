@@ -5,28 +5,29 @@
 // 회원 가입 가능한 날짜 수
 // ["chicken", "apple", "apple", "banana", "rice", "apple", "pork", "banana", "pork", "rice", "pot", "banana", "apple", "banana"]
 // ["banana", "apple", "rice", "pork", "pot"]
-function solution(want, number, discount) {
-    let startDate = 0;
-    let endDate = startDate + 10;
-    
-    const wantItems = want.reduce((acc, item, idx) => acc.set(item, number[idx]), new Map());
-    const currTermItems = discount.slice(startDate, endDate).reduce(((acc, item) => acc.set(item, (acc.get(item) || 0) + 1)), new Map());
+const MEMBERSHIP_VALID_DAYS = 10;
 
-    let cnt = 0;
-    
-    while (startDate < endDate) {
-        if ([...wantItems.entries()].every(([key, value]) => currTermItems.get(key) >= value)) {
-            cnt++;
-        };
-        
-        
-        currTermItems.set(discount[startDate], currTermItems.get(discount[startDate]) - 1);
-        startDate += 1;
-        if (endDate < discount.length) {
-            currTermItems.set(discount[endDate], (currTermItems.get(discount[endDate]) || 0) + 1);
-            endDate += 1;
-        }
+function solution(want, number, discount) {
+  let startDate = 0;
+  let endDate = startDate + MEMBERSHIP_VALID_DAYS;
+
+  const wantItems = want.reduce((acc, item, idx) => acc.set(item, number[idx]), new Map());
+  const currTermItems = discount
+    .slice(startDate, endDate)
+    .reduce((acc, item) => acc.set(item, (acc.get(item) || 0) + 1), new Map());
+
+  let cnt = 0;
+
+  while (endDate <= discount.length) {
+    if ([...wantItems.entries()].every(([key, value]) => currTermItems.get(key) >= value)) {
+      cnt++;
     }
-    
-    return cnt;
+
+    currTermItems.set(discount[startDate], currTermItems.get(discount[startDate]) - 1);
+    startDate += 1;
+    currTermItems.set(discount[endDate], (currTermItems.get(discount[endDate]) || 0) + 1);
+    endDate += 1;
+  }
+
+  return cnt;
 }
