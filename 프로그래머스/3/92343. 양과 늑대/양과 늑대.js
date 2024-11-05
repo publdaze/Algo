@@ -4,7 +4,7 @@ function getGraph(n, edges) {
     edges.forEach(([src, dst]) => {
         graph[src].push(dst);
     });
-    console.log(graph)
+    
     return graph;
 }
 
