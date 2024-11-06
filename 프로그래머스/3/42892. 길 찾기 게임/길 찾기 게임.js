@@ -22,20 +22,12 @@ function getTree(nodeinfo) {
 }
 
 function preorder(tree) {
-    const preorderNodes = [];
+    if (tree === null) return [];
     
-    const leftStack = [tree];
-    const rightStack = [];
+    const left = preorder(tree.left);
+    const right = preorder(tree.right);
     
-    while (leftStack.length > 0 || rightStack.length > 0) {
-        const node = leftStack.length > 0 ? leftStack.pop() : rightStack.pop();
-        preorderNodes.push(node.node);
-        
-        if (node.left) leftStack.push(node.left);
-        if (node.right) rightStack.push(node.right);
-    }
-    
-    return preorderNodes;
+    return [tree.node, ...left, ...right];
 }
 
 function postorder(tree) {
