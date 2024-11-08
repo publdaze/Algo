@@ -1,6 +1,6 @@
 # [level 3] 표 편집 - 81303 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/81303#) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/81303) 
 
 ### 성능 요약
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2024년 09월 30일 15:16:51
+2024년 11월 08일 14:08:58
 
 ### 문제 설명
 
