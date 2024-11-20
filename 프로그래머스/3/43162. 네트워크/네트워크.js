@@ -11,6 +11,7 @@ function getGraph(n, computers) {
 
 function dfs(start, graph, visited) {
     const stack = [start];
+    visited.add(start);
     
     while (stack.length > 0) {
         const src = stack.pop();
