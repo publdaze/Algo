@@ -1,30 +1,38 @@
-function solution(n, computers) {
-    let networkCnt = 0;
-    const visited = Array.from({ length: n }, () => 0);
+
+function getGraph(n, computers) {
+    const graph = Array.from({ length: n }, () => []);
+    computers.forEach((dsts, srcId) => {
+        dsts.forEach((dst, dstId) => {
+            if (dst === 1 && srcId !== dstId) graph[srcId].push(dstId);
+        });
+    });
+    return graph;
+}
+
+function dfs(start, graph, visited) {
+    const stack = [start];
     
-    const dfs = (startNode) => {
-        networkCnt += 1;
+    while (stack.length > 0) {
+        const src = stack.pop();
         
-        const stack = [startNode];
-        visited[startNode] = 1;
-    
-        while (stack.length > 0) {
-            const src = stack.pop();
-            
-            computers[src].forEach((isLinked, dst) => {
-                if (isLinked && visited[dst] === 0) {
-                    stack.push(dst);
-                    visited[dst] = 1;
-                }
-            })
+        for (const dst of graph[src]) {
+            if (visited.has(dst)) continue;
+            stack.push(dst);
+            visited.add(dst);
         }
     }
+}
+
+function solution(n, computers) {
+    const graph = getGraph(n, computers);
+    const visited = new Set();
     
-    for (let i = 0; i < n; i++) {
-        if (visited[i] === 0) {
-            dfs(i);
-        }
+    let network = 0;
+    for (let node = 0; node < n; node++) {
+        if (visited.has(node)) continue;
+        network++;
+        dfs(node, graph, visited);
     }
     
-    return networkCnt;
+    return network;
 }
