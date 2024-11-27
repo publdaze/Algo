@@ -20,7 +20,7 @@ function explore(remainFatigue, dungeons) {
     const stack = dungeons;
     
     let cnt = 0;
-    while (stack.length > 0) {
+    while (stack.length > 0 && remainFatigue > 0) {
         const [needFatigue, payFatigue] = stack.pop();
         
         if (remainFatigue < needFatigue) continue;
@@ -35,6 +35,7 @@ function solution(k, dungeons) {
     let maxDungeon = 0;
     for (const explorationOrder of permutation(dungeons)) {
          maxDungeon = Math.max(maxDungeon, explore(k, explorationOrder));
+        if (maxDungeon === dungeons.length) break;
     }
     
     return maxDungeon;
