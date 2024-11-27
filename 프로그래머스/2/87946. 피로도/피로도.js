@@ -1,33 +1,41 @@
-function permutations(arr, n) {
-    if (n === 1) return arr.map((v) => [v]);
-    let result = [];
+function removeElem(arr, i, cnt) {
+    const copyArr = arr.slice();
+    copyArr.splice(i, cnt);
+    return copyArr;
+}
 
-    arr.forEach((fixed, idx, arr) => {
-      const rest = arr.filter((_, index) => index !== idx);
-      const perms = permutations(rest, n - 1);
-      const combine = perms.map((v) => [fixed, ...v]);
-      result.push(...combine);
-    });
+function permutation(arr) {
+    if (arr.length === 1) return [arr];
+    
+    const perm = [];
+    for (let i = 0; i < arr.length; i++) {
+        for (const rest of permutation(removeElem(arr, i, 1))) {
+            perm.push([arr[i], ...rest]);
+        }
+    }
+    return perm;
+}
 
-    return result;
-  }
+function explore(remainFatigue, dungeons) {
+    const stack = dungeons;
+    
+    let cnt = 0;
+    while (stack.length > 0) {
+        const [needFatigue, payFatigue] = stack.pop();
+        
+        if (remainFatigue < needFatigue) continue;
+        cnt++;
+        remainFatigue -= payFatigue;
+    }
+    return cnt;
+}
+
 
 function solution(k, dungeons) {
-    let result = 0;
-    for(let dungeonsCase of permutations(dungeons, dungeons.length)) {
-        if (result === dungeons.length) return result;
-        let have = k;
-        let currResult = 0;
-        for (let [need, pay] of dungeonsCase) {
-            if (have < need) {
-                break;
-            }
-            have -= pay;
-            currResult += 1;
-        }
-        
-        result = Math.max(result, currResult);
+    let maxDungeon = 0;
+    for (const explorationOrder of permutation(dungeons)) {
+         maxDungeon = Math.max(maxDungeon, explore(k, explorationOrder));
     }
     
-    return result;
+    return maxDungeon;
 }
