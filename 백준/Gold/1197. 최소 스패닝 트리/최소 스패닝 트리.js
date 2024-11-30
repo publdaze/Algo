@@ -7,7 +7,7 @@ const input = fs
   .map((line) => line.split(" ").map(Number));
 
 function find(parent, x) {
-  return parent[x] === x ? x : find(parent, parent[x]);
+  return parent[x] === x ? x : (parent[x] = find(parent, parent[x]));
 }
 
 function union(parent, src, dst) {
