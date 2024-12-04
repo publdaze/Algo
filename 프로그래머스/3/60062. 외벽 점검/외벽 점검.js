@@ -1,38 +1,57 @@
+function removeElement(arr, index) {
+  const copy = arr.slice();
+  copy.splice(index, 1);
+  return copy;
+}
+
+function generatePermutations(arr) {
+  if (arr.length === 1) return [arr];
+
+  const permutations = [];
+  for (let i = 0; i < arr.length; i++) {
+    const remaining = removeElement(arr, i);
+    for (const perm of generatePermutations(remaining)) {
+      permutations.push([arr[i], ...perm]);
+    }
+  }
+  return permutations;
+}
+
+// 원형 배열을 선형 배열로 확장
+function expandWeakPoints(weak, n) {
+  return weak.concat(weak.map((point) => point + n));
+}
+
+// 특정 친구 배치로 취약 지점 커버 가능 여부 확인
+function calculateFriendsNeeded(expandedWeak, start, friends) {
+  let friendCount = 1;
+  let maxCoverage = expandedWeak[start] + friends[friendCount - 1]; // start 친구의 커버 범위
+
+  for (let i = start; i < start + expandedWeak.length / 2; i++) {
+    if (expandedWeak[i] > maxCoverage) {
+      friendCount++; // 새로운 친구 투입
+      if (friendCount > friends.length) return Infinity; // 친구 초과 시 실패
+      maxCoverage = expandedWeak[i] + friends[friendCount - 1]; // 새 친구의 커버 범위
+    }
+  }
+
+  return friendCount;
+}
+
 function solution(n, weak, dist) {
-  const weakLength = weak.length;
-  const extendedWeak = [...weak, ...weak.map((x) => x + n)];
+  const expandedWeak = expandWeakPoints(weak, n);
 
-  let minFriends = dist.length + 1; // 초기값: 모든 친구를 써도 안 되는 경우
+  dist.sort((a, b) => b - a);
 
-  // 친구 순열을 이용한 완전 탐색
-  const permutations = (arr) => {
-    if (arr.length === 0) return [[]];
-    return arr.flatMap((v, i) =>
-      permutations([...arr.slice(0, i), ...arr.slice(i + 1)]).map((perm) => [
-        v,
-        ...perm,
-      ])
-    );
-  };
+  let minFriends = dist.length + 1;
 
-  const distPermutations = permutations(dist);
+  const allPermutations = generatePermutations(dist);
 
-  // 시작점을 기준으로 탐색
-  for (let start = 0; start < weakLength; start++) {
-    for (const perm of distPermutations) {
-      let count = 1; // 투입한 친구 수
-      let position = extendedWeak[start] + perm[count - 1]; // 첫 친구의 커버 범위
-
-      for (let i = start; i < start + weakLength; i++) {
-        if (extendedWeak[i] > position) {
-          // 새 친구 투입
-          count += 1;
-          if (count > perm.length) break;
-          position = extendedWeak[i] + perm[count - 1];
-        }
-      }
-
-      minFriends = Math.min(minFriends, count);
+  // 모든 시작 지점과 친구 배치에 대해 탐색
+  for (let start = 0; start < weak.length; start++) {
+    for (const friends of allPermutations) {
+      const friendsNeeded = calculateFriendsNeeded(expandedWeak, start, friends);
+      minFriends = Math.min(minFriends, friendsNeeded);
     }
   }
 
