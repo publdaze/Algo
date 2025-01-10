@@ -1,27 +1,28 @@
-//REVIEW
 function solution(toppings) {
-    const toppingSetA = new Set();
-    const toppingCountB = new Map();
-    let uniqueToppingsB = 0;
+    const totalCnt = toppings.reduce((acc, curr) => {
+        acc.set(curr, (acc.get(curr) || 0) + 1);
+        return acc;
+    }, new Map());
+    const dividedSet = new Set();
+    
     let result = 0;
-
-    toppings.forEach(num => {
-        toppingCountB.set(num, (toppingCountB.get(num) || 0) + 1);
-    });
-    uniqueToppingsB = new Set(toppings).size;
-
-    toppings.forEach(num => {
-        toppingSetA.add(num);
-
-        let currentCount = toppingCountB.get(num) - 1;
-        toppingCountB.set(num, currentCount);
-        if (currentCount === 0) {
-            uniqueToppingsB--;
-            toppingCountB.delete(num);
+    let findEquity = false;
+    for (let topping of toppings) {
+        dividedSet.add(topping);
+        const currToppingCnt = totalCnt.get(topping);
+        if(currToppingCnt === 1) {
+            totalCnt.delete(topping);
+        } else {
+            totalCnt.set(topping, currToppingCnt - 1);
         }
-
-        if (toppingSetA.size === uniqueToppingsB) result++;
-    });
-
+        
+        if (totalCnt.size === dividedSet.size) {
+            result += 1;
+            findEquity = true;
+        } else if (findEquity === true) {
+            break;
+        }
+    }
+    
     return result;
 }
