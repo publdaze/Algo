@@ -1,30 +1,13 @@
 function solution(keyinput, [width, height]) {
     const [MAX_X, MAX_Y] = [Math.floor(width / 2), Math.floor(height / 2)];
+    const startPosition = [0, 0];
     
     const move = {
-        up: (x, y) => {
-            if (y >= MAX_Y) return [x, y];
-            return [x, y + 1];
-        },
-        down: (x, y) => {
-            if (y <= -MAX_Y) return [x, y];
-            return [x, y - 1];
-        },
-        left: (x, y) => {
-            if (x <= -MAX_X) return [x, y];
-            return [x - 1, y];
-        },
-        right: (x, y) => {
-            if (x >= MAX_X) return [x, y];
-            return [x + 1, y];
-        },
-    }
+        up: ([x, y]) => [x, Math.min(y + 1, MAX_Y)],
+        down: ([x, y]) => [x, Math.max(y - 1, -MAX_Y)],
+        left: ([x, y]) => [Math.max(x - 1, -MAX_X), y],
+        right: ([x, y]) => [Math.min(x + 1, MAX_X), y],
+    };
     
-    let [x, y] = [0, 0];
-    
-    for (const key of keyinput) {
-        [x, y] = move[key](x, y);
-    }
-    
-    return [x, y];
+    return keyinput.reduce((position, key) => move[key](position), startPosition);
 }
