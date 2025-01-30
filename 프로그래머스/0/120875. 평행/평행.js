@@ -1,10 +1,11 @@
-function setSlope([x1, y1], [x2, y2]) {
-    return (y1 - y2) / (x1 - x2)
+function calculateSlope([x1, y1], [x2, y2]) {
+    return (y2 - y1) / (x2 - x1);
 }
 
 function solution(dots) {
-    const [a, b, c, d] = dots.sort((i, j) => i[0] - j[0]);
-    if (setSlope(a, b) === setSlope(c, d)) return 1;
-    if (setSlope(a, c) === setSlope(b, d)) return 1;
-    return 0;
+    const [a, b, c, d] = dots.sort((dot1, dot2) => dot1[0] - dot2[0]);
+    return calculateSlope(a, b) === calculateSlope(c, d) || 
+           calculateSlope(a, c) === calculateSlope(b, d) 
+           ? 1 
+           : 0;
 }
