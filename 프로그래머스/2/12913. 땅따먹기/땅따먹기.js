@@ -1,6 +1,3 @@
 function solution(land) {
-    const COL_SIZE = 4;
-    const INIT_SCORE = 0;
-    
-    return Math.max(...land.reduce((prevMaxScores, currScores) => currScores.map((currScore, i) => Math.max(...prevMaxScores.filter((_, j) => i !== j)) + currScore), Array(COL_SIZE).fill(INIT_SCORE)));
+    return Math.max(...land.reduce((accRow, currRow) => currRow.map((cell, i) => cell + Math.max(...accRow.slice(0, i), ...accRow.slice(i + 1)))));
 }
