@@ -1,3 +1,6 @@
+// - 털거나 털 지 않거나 두가지 경우에 대해서 dp 적용 생각
+// - 첫번째를 두 가지 경우로 고정해두고, 두 배열로 각 경우를 판단하는 건 참고
+
 function solution(money) {
     const maxFirstVisit = Array(money.length).fill(0);
     const maxFirstNotVisit = Array(money.length).fill(0);
