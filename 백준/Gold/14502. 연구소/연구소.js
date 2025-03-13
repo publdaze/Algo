@@ -1,23 +1,17 @@
 const fs = require("fs");
-const input = fs
+const rawInput = fs
   .readFileSync(process.platform === "linux" ? "/dev/stdin" : "./input.txt")
   .toString()
   .trim()
   .split("\n")
   .map((line) => line.split(" ").map(Number));
 
-// 바이러스 막기 -> 벽 세우기 (필수 3개 세우기)
-// 바이러스 상하좌우 이동 가능
-// 0은 빈 칸, 1은 벽, 2는 바이러스(개수 2보다 크거나 같고, 10보다 작거나 같은)
-// 바이러스가 퍼질 수 없는 곳을 안전 영역
-// "안전 영역의 최대값 구하기"
-// 막으려면 1에 연결되어 벽을 세워야 함
-// 벽을 세우는 경우의 수가 최대 64C3이므로 모든 경우에 대해서 체크해봐도 괜찮을 듯
-
+/* 셀 상태 상수 */
 const EMPTY = 0;
 const WALL = 1;
 const VIRUS = 2;
 
+/* 이동 방향 (상하좌우) */
 const DIRECTION = [
   [1, 0],
   [0, 1],
@@ -25,85 +19,96 @@ const DIRECTION = [
   [0, -1],
 ];
 
-const [N, M] = input.shift();
+/* 유틸리티 함수 */
+const isWall = (cell) => cell === WALL;
+const isVirus = (cell) => cell === VIRUS;
+const outOfRange = (row, col, N, M) => row < 0 || row >= N || col < 0 || col >= M;
+const indexToCoordinate = (index, cols) => [Math.floor(index / cols), index % cols];
+const deepCopy = (grid) => JSON.parse(JSON.stringify(grid));
 
-const getBuiltWallMap = ([rowA, colA], [rowB, colB], [rowC, colC]) => {
-  // 함수는 어떤 순서로 작성해야 할까?
-  const copy = JSON.parse(JSON.stringify(input));
-  copy[rowA][colA] = 1;
-  copy[rowB][colB] = 1;
-  copy[rowC][colC] = 1;
-  return copy;
+/* 벽 배치를 적용하여 새로운 맵을 생성 */
+const createWallConfiguration = (grid, wallCoords) => {
+  const newGrid = deepCopy(grid);
+  for (const [row, col] of wallCoords) {
+    newGrid[row][col] = WALL;
+  }
+  return newGrid;
 };
 
-const isWall = (cell) => {
-  return cell === WALL;
-};
-
-const isVirus = (cell) => {
-  return cell === VIRUS;
-};
-
-const outOfRange = (row, col) => {
-  return row < 0 || row >= N || col < 0 || col >= M;
-};
-
-const dfs = (graph, startRow, startCol) => {
+/* DFS로 바이러스를 확산시킴 */
+const spreadVirusDFS = (grid, startRow, startCol, N, M) => {
   const stack = [[startRow, startCol]];
-
-  while (stack.length > 0) {
+  while (stack.length) {
     const [row, col] = stack.pop();
-    for (let [dr, dc] of DIRECTION) {
-      const [nr, nc] = [row + dr, col + dc];
-      if (outOfRange(nr, nc) || isWall(graph[nr][nc]) || isVirus(graph[nr][nc])) continue;
-      graph[nr][nc] = VIRUS;
+    for (const [dr, dc] of DIRECTION) {
+      const nr = row + dr;
+      const nc = col + dc;
+      if (outOfRange(nr, nc, N, M)) continue;
+      if (isWall(grid[nr][nc]) || isVirus(grid[nr][nc])) continue;
+      grid[nr][nc] = VIRUS;
       stack.push([nr, nc]);
     }
   }
 };
 
-const setVirusArea = (map, virusRow, virusCol) => {
-  dfs(map, virusRow, virusCol);
-};
-
-const checkSafeArea = (map, viruses) => {
-  for (let [virusRow, virusCol] of viruses) {
-    setVirusArea(map, virusRow, virusCol);
+/* 바이러스 확산 후 안전 영역(빈 칸 수) 평가 */
+const evaluateSafeArea = (grid, virusPositions, N, M) => {
+  const simulationGrid = deepCopy(grid);
+  for (const [row, col] of virusPositions) {
+    spreadVirusDFS(simulationGrid, row, col, N, M);
   }
-  return map.flat().filter((cell) => cell === EMPTY).length;
-};
-
-const getCoordinate = (num, col) => {
-  return [Math.floor(num / col), num % col];
-};
-
-const builtWallMap = [];
-
-for (let i = 0; i < N * M - 2; i++) {
-  const [rowA, colA] = getCoordinate(i, M);
-  if (isWall(input[rowA][colA]) || isVirus(input[rowA][colA])) continue;
-  for (let j = i + 1; j < N * M - 1; j++) {
-    const [rowB, colB] = getCoordinate(j, M);
-    if (isWall(input[rowB][colB]) || isVirus(input[rowB][colB])) continue;
-
-    for (let k = j + 1; k < N * M; k++) {
-      const [rowC, colC] = getCoordinate(k, M);
-      if (isWall(input[rowC][colC]) || isVirus(input[rowC][colC])) continue;
-
-      builtWallMap.push(getBuiltWallMap([rowA, colA], [rowB, colB], [rowC, colC]));
+  let safeCount = 0;
+  for (let i = 0; i < N; i++) {
+    for (let j = 0; j < M; j++) {
+      if (simulationGrid[i][j] === EMPTY) safeCount++;
     }
   }
-}
+  return safeCount;
+};
 
-const viruses = [];
-input.forEach((row, i) =>
-  row.forEach((cell, j) => {
-    if (isVirus(cell)) viruses.push([i, j]);
-  })
-);
+/* 빈 칸에서 3개 벽 배치 후보 조합 생성 */
+const generateCandidateConfigurations = (grid, N, M) => {
+  const candidates = [];
+  const totalCells = N * M;
+  for (let i = 0; i < totalCells - 2; i++) {
+    const [rowA, colA] = indexToCoordinate(i, M);
+    if (grid[rowA][colA] !== EMPTY) continue;
+    for (let j = i + 1; j < totalCells - 1; j++) {
+      const [rowB, colB] = indexToCoordinate(j, M);
+      if (grid[rowB][colB] !== EMPTY) continue;
+      for (let k = j + 1; k < totalCells; k++) {
+        const [rowC, colC] = indexToCoordinate(k, M);
+        if (grid[rowC][colC] !== EMPTY) continue;
+        candidates.push([[rowA, colA], [rowB, colB], [rowC, colC]]);
+      }
+    }
+  }
+  return candidates;
+};
 
-let maxSafeArea = 0;
-for (let map of builtWallMap) {
-  maxSafeArea = Math.max(maxSafeArea, checkSafeArea(map, viruses));
-}
-console.log(maxSafeArea);
+const solve = () => {
+  const [N, M] = rawInput.shift();
+  const grid = rawInput;
+
+  // 바이러스 위치 수집 (바이러스 확산 시뮬레이션에 필요)
+  const virusPositions = [];
+  for (let i = 0; i < N; i++) {
+    for (let j = 0; j < M; j++) {
+      if (grid[i][j] === VIRUS) {
+        virusPositions.push([i, j]);
+      }
+    }
+  }
+
+  const candidateWalls = generateCandidateConfigurations(grid, N, M);
+  let maxSafeArea = 0;
+  for (const wallCoords of candidateWalls) {
+    const wallMap = createWallConfiguration(grid, wallCoords);
+    const safeArea = evaluateSafeArea(wallMap, virusPositions, N, M);
+    maxSafeArea = Math.max(maxSafeArea, safeArea);
+  }
+
+  console.log(maxSafeArea);
+};
+
+solve();
