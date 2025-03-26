@@ -12,7 +12,7 @@ const inputNumList = fs
 // 아래쪽 공기청정기의 바람은 시계방향으로 순환
 
 // 초마다
-// 바이러스 확산
+// 미세먼지 확산
 // 공기청정 가동
 
 // T초가 지난 후 구사과 방에 남아있는 미세먼지의 양
@@ -28,34 +28,38 @@ const outOfRange = (row, col, maxRow, maxCol) => {
   return row < 0 || row >= maxRow || col < 0 || col >= maxCol;
 };
 
-const isAirCleaner = (cell) => {
+const isAirCleanerCell = (cell) => {
   return cell === -1;
 };
 
-const spreadVirus = (maxRow, maxCol, roomInfo) => {
-  const spreadRoomInfo = Array.from({ length: maxRow }, () => Array.from({ length: maxCol }, () => 0));
-  roomInfo.forEach((row, i) =>
-    row.forEach((cell, j) => {
-      if (isAirCleaner(cell)) {
-        spreadRoomInfo[i][j] = -1;
+const spreadDust = (maxRow, maxCol, room) => {
+  const nextRoom = Array.from({ length: maxRow }, () => Array.from({ length: maxCol }, () => 0));
+
+  // 각 셀마다 4방향으로 확산, 공기청정기는 확산 X
+  room.forEach((row, r) =>
+    row.forEach((cell, c) => {
+      if (isAirCleanerCell(cell)) {
+        nextRoom[r][c] = -1;
         return;
       }
-      let canMoveCnt = 0;
+      const spreadAmount = Math.floor(cell / 5);
+      let spreadCount = 0;
       for (let [dr, dc] of DIRECTION) {
-        const [nr, nc] = [i + dr, j + dc];
-        if (outOfRange(nr, nc, maxRow, maxCol) || isAirCleaner(roomInfo[nr][nc])) continue;
-        canMoveCnt++;
-        spreadRoomInfo[nr][nc] += Math.floor(cell / 5);
+        const [nr, nc] = [r + dr, c + dc];
+        if (outOfRange(nr, nc, maxRow, maxCol) || isAirCleanerCell(room[nr][nc])) continue;
+        spreadCount++;
+        nextRoom[nr][nc] += spreadAmount;
       }
-      spreadRoomInfo[i][j] += roomInfo[i][j] - canMoveCnt * Math.floor(cell / 5);
+      nextRoom[r][c] += room[r][c] - spreadCount * spreadAmount;
     })
   );
-  return spreadRoomInfo;
+  return nextRoom;
 };
 
-const findAirCleaner = (roomInfo) => {
-  for (let i = 0; i < roomInfo.length; i++) {
-    if (isAirCleaner(roomInfo[i][0]))
+const findAirCleanerPositions = (room) => {
+  for (let i = 0; i < room.length; i++) {
+    // 공기청정기는 항상 첫 번째 열에 위치, 연속된 두 행 차지
+    if (isAirCleanerCell(room[i][0]))
       return [
         [i, 0],
         [i + 1, 0],
@@ -63,55 +67,63 @@ const findAirCleaner = (roomInfo) => {
   }
 };
 
-const airCirculation = (maxRow, maxCol, roomInfo) => {
-  const [[upRow, upCol], [downRow, downCol]] = findAirCleaner(roomInfo);
-
-  // 위쪽
-  for (let i = upRow - 1; i > 0; i--) {
-    roomInfo[i][0] = roomInfo[i - 1][0];
+function circulateAirTop(room, upRow, maxCol) {
+  // 왼쪽 열: 위쪽 방향으로 이동 (upRow-1 ~ 0)
+  for (let r = upRow - 1; r > 0; r--) {
+    room[r][0] = room[r - 1][0];
   }
-
-  for (let i = upCol; i < maxCol - 1; i++) {
-    roomInfo[0][i] = roomInfo[0][i + 1];
+  // 윗쪽 행: 왼쪽에서 오른쪽으로 이동 (0 ~ maxCol-1)
+  for (let c = 0; c < maxCol - 1; c++) {
+    room[0][c] = room[0][c + 1];
   }
-
-  for (let i = 0; i < upRow; i++) {
-    roomInfo[i][maxCol - 1] = roomInfo[i + 1][maxCol - 1];
+  // 오른쪽 열: 아래쪽 방향으로 이동 (0 ~ upRow)
+  for (let r = 0; r < upRow; r++) {
+    room[r][maxCol - 1] = room[r + 1][maxCol - 1];
   }
-
-  for (let i = maxCol - 1; i > upCol + 1; i--) {
-    roomInfo[upRow][i] = roomInfo[upRow][i - 1];
+  // 윗쪽 행: 오른쪽에서 왼쪽으로 이동 (maxCol-1 ~ 1)
+  for (let c = maxCol - 1; c > 1; c--) {
+    room[upRow][c] = room[upRow][c - 1];
   }
-  roomInfo[upRow][upCol + 1] = 0;
+  room[upRow][1] = 0;
+}
 
-  // 아래쪽
-  for (let i = downRow + 1; i < maxRow - 1; i++) {
-    roomInfo[i][downCol] = roomInfo[i + 1][downCol];
+function circulateAirBottom(room, downRow, maxRow, maxCol) {
+  // 왼쪽 열: 아래쪽 방향으로 이동 (downRow+1 ~ maxRow-1)
+  for (let r = downRow + 1; r < maxRow - 1; r++) {
+    room[r][0] = room[r + 1][0];
   }
-
-  for (let i = 0; i < maxCol - 1; i++) {
-    roomInfo[maxRow - 1][i] = roomInfo[maxRow - 1][i + 1];
+  // 아랫쪽 행: 왼쪽에서 오른쪽으로 이동 (0 ~ maxCol-1)
+  for (let c = 0; c < maxCol - 1; c++) {
+    room[maxRow - 1][c] = room[maxRow - 1][c + 1];
   }
-
-  for (let i = maxRow - 1; i > downRow; i--) {
-    roomInfo[i][maxCol - 1] = roomInfo[i - 1][maxCol - 1];
+  // 오른쪽 열: 위쪽 방향으로 이동 (maxRow-1 ~ downRow)
+  for (let r = maxRow - 1; r > downRow; r--) {
+    room[r][maxCol - 1] = room[r - 1][maxCol - 1];
   }
-
-  for (let i = maxCol - 1; i > upCol + 1; i--) {
-    roomInfo[downRow][i] = roomInfo[downRow][i - 1];
+  // 아랫쪽 행: 오른쪽에서 왼쪽으로 이동 (maxCol-1 ~ 1)
+  for (let c = maxCol - 1; c > 1; c--) {
+    room[downRow][c] = room[downRow][c - 1];
   }
-  roomInfo[downRow][downCol + 1] = 0;
+  room[downRow][1] = 0;
+}
 
-  return roomInfo;
+const airCirculation = (maxRow, maxCol, room) => {
+  const [upper, lower] = findAirCleanerPositions(room);
+  const upRow = upper[0];
+  const downRow = lower[0];
+  circulateAirTop(room, upRow, maxCol);
+  circulateAirBottom(room, downRow, maxRow, maxCol);
+  return room;
 };
 
-const solution = (maxRow, maxCol, time, roomInfo) => {
+const solution = (maxRow, maxCol, time, room) => {
   for (let i = 0; i < time; i++) {
-    const spreadRoomInfo = spreadVirus(maxRow, maxCol, roomInfo);
-    roomInfo = airCirculation(maxRow, maxCol, spreadRoomInfo);
+    const spreadRoom = spreadDust(maxRow, maxCol, room);
+    room = airCirculation(maxRow, maxCol, spreadRoom);
   }
 
-  console.log(roomInfo.flat().reduce((a, c) => a + c, 0) + 2);
+  // 공기청정기 위치는 -1로 표시되어 있으므로 보정(+2)
+  console.log(room.flat().reduce((a, c) => a + c, 0) + 2);
 };
 
 const [maxRow, maxCol, time] = inputNumList.shift();
