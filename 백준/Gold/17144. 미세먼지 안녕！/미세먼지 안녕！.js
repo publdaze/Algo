@@ -67,7 +67,7 @@ const findAirCleanerPositions = (room) => {
   }
 };
 
-function circulateAirTop(room, upRow, maxCol) {
+const circulateAirTop = (room, upRow, maxCol) => {
   // 왼쪽 열: 위쪽 방향으로 이동 (upRow-1 ~ 0)
   for (let r = upRow - 1; r > 0; r--) {
     room[r][0] = room[r - 1][0];
@@ -85,9 +85,9 @@ function circulateAirTop(room, upRow, maxCol) {
     room[upRow][c] = room[upRow][c - 1];
   }
   room[upRow][1] = 0;
-}
+};
 
-function circulateAirBottom(room, downRow, maxRow, maxCol) {
+const circulateAirBottom = (room, downRow, maxRow, maxCol) => {
   // 왼쪽 열: 아래쪽 방향으로 이동 (downRow+1 ~ maxRow-1)
   for (let r = downRow + 1; r < maxRow - 1; r++) {
     room[r][0] = room[r + 1][0];
@@ -105,7 +105,7 @@ function circulateAirBottom(room, downRow, maxRow, maxCol) {
     room[downRow][c] = room[downRow][c - 1];
   }
   room[downRow][1] = 0;
-}
+};
 
 const airCirculation = (maxRow, maxCol, room) => {
   const [upper, lower] = findAirCleanerPositions(room);
