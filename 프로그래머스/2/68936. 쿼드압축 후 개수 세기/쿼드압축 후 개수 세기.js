@@ -1,33 +1,38 @@
-function getZippedArrAndSetCnt(arr, zip, cnt) {
-    if (arr.length < 2) {
-        cnt[arr.flat().at(0)] += 1;
-        return
-    };
-    
-    getZippedArrAndSetCnt(Array.from({ length: arr.length / zip}, (_, i) => Array.from({ length: arr.length / zip}, (_, j) => {
-        const zippedNums = new Set([arr[i * 2][j * 2], arr[i * 2 + 1][j * 2], arr[i * 2][j * 2 + 1], arr[i * 2 + 1][j * 2 + 1]]);
-        if (zippedNums.size > 1) {
-            cnt[arr[i * 2    ][j * 2    ]] += 1;
-            cnt[arr[i * 2 + 1][j * 2    ]] += 1;
-            cnt[arr[i * 2    ][j * 2 + 1]] += 1;
-            cnt[arr[i * 2 + 1][j * 2 + 1]] += 1;
+function zip(arr) {
+    const result = { 1: 0, 0: 0 };
+    const row = [];
+    for (let i = 0; i < arr.length; i += 2) {
+        const col = [];
+        for (let j = 0; j < arr.length; j += 2) {
+            const cnt = { 1: 0, 0: 0 };
+            cnt[arr[i    ][j    ]] += 1;
+            cnt[arr[i + 1][j    ]] += 1;
+            cnt[arr[i + 1][j + 1]] += 1;
+            cnt[arr[i    ][j + 1]] += 1;
+            
+            if (cnt[1] === 4) col.push(1);
+            else if (cnt[0] === 4) col.push(0);
+            else {
+                col.push(null);
+                result[1] += cnt[1];
+                result[0] += cnt[0];
+            }
         }
-        return zippedNums.size > 1 ? false : [...zippedNums].at(0);
-    })), zip, cnt);
+        row.push(col);
+    }
     
+    return [row, result];
 }
 
 function solution(arr) {
-    // 작은 거부터 확인 후 키워가며 합치기 vs 큰 거부터 확인 후 쪼개기
-    // 작은 거부터 확인 후 키워가며 합치기
-    // 2*2부터 시작 -> 다른 게 섞여 있으면 개수 바로 업데이트 후 false 처리
-    // 다 같으면 해당 숫자로 업데이트
-    // n*n까지 완료 후 개수 반환
-    
-    let zip = 2;
-    const cnt = {0: 0, 1: 0};
-    
-    getZippedArrAndSetCnt(arr, zip, cnt);
-    
-    return [cnt[0], cnt[1]];
+    const result = { 1: 0, 0: 0 };
+    while (arr.length > 1) {
+        const [zippedArr, zippedResult] = zip(arr);
+        
+        result[1] += zippedResult[1];
+        result[0] += zippedResult[0];
+        arr = zippedArr;
+    }
+    result[arr[0]] += 1;
+    return [result[0], result[1]];
 }
