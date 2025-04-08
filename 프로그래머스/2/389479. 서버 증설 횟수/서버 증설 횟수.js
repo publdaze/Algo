@@ -4,20 +4,35 @@
 // SOL) m보다 이용자 수가 많은 경우를 찾는다. -> 필요한 서버 수와 시간을 저장한다. -> 시간 차를 계산해 서버 증설이 더 필요하다면, 증설 카운트를 올린다.
 // WARN) 서버 증설 시점이 다르면, 만료 시점도 제각각! 수가 유동적임
 
+function getExpansionCandidates(players, m) {
+  return players
+    .map((player, time) => ({ time, neededServer: Math.floor(player / m) }))
+    .filter(({ neededServer }) => neededServer > 0);
+}
+
+function adjustActiveServers(currentTime, requiredCount, k, activeServerExpiry) {
+  // 만료된 서버 제거
+  while (activeServerExpiry.length > 0 && activeServerExpiry[0] <= currentTime) {
+    activeServerExpiry.shift();
+  }
+  
+  let newExpansions = 0;
+  // 추가 증설이 필요한 경우
+  while (activeServerExpiry.length < requiredCount) {
+    activeServerExpiry.push(currentTime + k);
+    newExpansions += 1;
+  }
+  return newExpansions;
+}
+
 function solution(players, m, k) {
-    const candidateIncrese = players.map((player, time) => ({ time, neededServer: Math.floor(player / m) }))
-                                    .filter(({ neededServer }) => neededServer > 0);
-    let increseServerCnt = 0;
-    let serverExpireTimeQueue = [];
+  const expansionCandidates = getExpansionCandidates(players, m);
+  let additionalServerCount = 0;
+  const activeServerExpiry = []; // 현재 활성 서버의 만료 시점 저장 (오름차순 유지)
+
+  for (const { time, neededServer } of expansionCandidates) {
+    additionalServerCount += adjustActiveServers(time, neededServer, k, activeServerExpiry);
+  }
     
-    return candidateIncrese.reduce((increseServerCnt, { time, neededServer }) => {
-        while (serverExpireTimeQueue.at(0) <= time) serverExpireTimeQueue.shift();
-        if (serverExpireTimeQueue.length < neededServer) {
-            for (let i = serverExpireTimeQueue.length; i < neededServer; i++) {
-                serverExpireTimeQueue.push(time + k);
-                increseServerCnt += 1;
-            }
-        }
-        return increseServerCnt;
-    }, 0);
+  return additionalServerCount;
 }
